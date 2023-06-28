@@ -3,21 +3,27 @@ const mongoose  = require("mongoose");
 const bodyParser = require("body-parser");
 const keys = require("./config/keys");
 const users = require("./routes/api/users");
+const passport = require("passport");
 
 
 const app = express();
+
+
+session
 // bodyparser plugin
 app.use(bodyParser.urlencoded({ extended:false }));
 app.use(bodyParser.json());
 
+// mongo db connect
 mongoose.connect(keys.mongoURI)
   .then(() => console.log("DB connect"))
   .catch((err) => console.log("err:", err))
 
-app.get("/", (req, res) => {
-  res.send("Hello world");
-})
+// passport
+app.use(passport.initialize());
+require("./config/passport")(passport)
 
+// 使用 routers users
 app.use("/api/users", users)
 
 const port = process.env.PORT || 5000;

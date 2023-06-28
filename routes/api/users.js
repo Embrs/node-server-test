@@ -3,9 +3,13 @@ const router = express.Router();
 const bcrypt = require("bcrypt"); // 加密
 const gravatar = require("gravatar"); // 頭像
 const jwt = require("jsonwebtoken"); // token
+const passport = require("passport")
 
 const keys = require("../../config/keys");
 const User = require("../../models/user");
+
+passport.initialize()
+
 router.get("/test", (req,res) => {
 
   res.json({msg: "login works"})
@@ -57,15 +61,19 @@ router.post("/login", (req,res) => {
             if (err) throw err;
             res.json({
               success: true,
-              token: `mrwu${token}`
+              token: `Bearer ${token}`
             })
           })
-          // res.json({msg:"success"});
           return;
         };
         return res.status(400).json({pssword: "密碼錯誤"})
       });
     })
+})
+// $route POST api/users/current
+// @desc user info
+// @access Private
+router.get("/current", passport.authenticate("jwt", {section: false}), (req, res) => {
 
 })
 module.exports = router;
