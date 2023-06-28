@@ -8,8 +8,6 @@ const passport = require("passport");
 
 const app = express();
 
-
-session
 // bodyparser plugin
 app.use(bodyParser.urlencoded({ extended:false }));
 app.use(bodyParser.json());
