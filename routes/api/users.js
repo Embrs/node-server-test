@@ -10,11 +10,6 @@ const User = require("../../models/user");
 
 passport.initialize()
 
-router.get("/test", (req,res) => {
-
-  res.json({msg: "login works"})
-});
-
 // $route POST api/users/register
 // @desc Create user
 // @access public
@@ -31,7 +26,8 @@ router.post("/register", (req,res) => {
         name: req.body.name,
         email: req.body.email,
         avatar,
-        password: req.body.password
+        password: req.body.password,
+        identity: req.body.identity
       });
       bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -53,10 +49,16 @@ router.post("/login", (req,res) => {
   const password = req.body.password;
   User.findOne({email})
     .then( user => {
-      if(!user) return res.status(404).json({email: "查無用戶"})
+      if(!user) return res.status(404).json("查無用戶");
+      // 密碼匹配
       bcrypt.compare(password, user.password).then((isMatch) => {
         if (isMatch) {
-          const rule = {id:user.id, name: user.name};
+          const rule = {
+            id:user.id,
+            name: user.name,
+            avatar: user.avatar,
+            identity: user.identity
+          };
           jwt.sign(rule, keys.secretOrKey, {expiresIn: 3600}, (err, token) => {
             if (err) throw err;
             res.json({
@@ -66,7 +68,7 @@ router.post("/login", (req,res) => {
           })
           return;
         };
-        return res.status(400).json({pssword: "密碼錯誤"})
+        return res.status(400).json("帳號密碼錯誤")
       });
     })
 })
@@ -78,7 +80,7 @@ router.get("/current", passport.authenticate("jwt", {session: false}), (req, res
     id: req.user.id,
     name: req.user.name,
     email: req.user.email,
-    
+    identity: req.user.identity
   })
 })
 module.exports = router;
