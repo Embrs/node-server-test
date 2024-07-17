@@ -4,7 +4,7 @@
   "description": "restful api",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon src/app.ts --files",
+    "start": "nodemon src/app.ts",
     "build": "tsc --project ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
